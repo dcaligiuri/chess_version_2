@@ -113,6 +113,9 @@ class Piece
 	end 	
 	
 	def move(board,space_arr)
+		if valid_move?(board, space_arr) == false 
+			return false 
+		end 
 		@position = space_arr
 		board.board.each do |row|
 			row.collect! do |element|
@@ -120,7 +123,9 @@ class Piece
 			end 
 		end 
 		board.board[@position[0]][@position[1]] = self 
+		self.was_moved
 	end 
+	
 
 end 
 
@@ -147,6 +152,18 @@ class Pawn < Piece
 			end 
 			if board.board[self.position[0] + 1][self.position[1] + 1] != nil 
 				if board.board[self.position[0] + 1][self.position[1] + 1].color == "black" && [self.position[0] + 1, self.position[1] + 1] == space_arr
+					return true 
+				end 
+			end 
+		end 
+		if self.color == "black"
+			if board.board[self.position[0] - 1][self.position[1] - 1] != nil 
+				if board.board[self.position[0] - 1][self.position[1] - 1].color == "white" && [self.position[0] - 1, self.position[1] - 1] == space_arr
+					return true 
+				end 
+			end 
+			if board.board[self.position[0] + 1][self.position[1] - 1] != nil 
+				if board.board[self.position[0] + 1][self.position[1] - 1].color == "white" && [self.position[0] + 1, self.position[1] - 1] == space_arr
 					return true 
 				end 
 			end 
@@ -198,6 +215,42 @@ end
 	
 
 class Knight < Piece 
+	def attacking?(board, square)
+		attacked_squares = []
+		if [self.position[0] - 2, self.position[1] - 1] != nil 
+			attacked_squares << [self.position[0] - 2, self.position[1] - 1]
+		end 
+		if [self.position[0] - 2, self.position[1] + 1] != nil 
+			attacked_squares << [self.position[0] - 2, self.position[1] + 1]
+		end 
+		if [self.position[0] - 1, self.position[1] - 2] != nil 
+			attacked_squares << [self.position[0] - 1, self.position[1] - 2]
+		end 
+		if [self.position[0] - 1, self.position[1] + 2] != nil
+			attacked_squares << [self.position[0] - 1, self.position[1] + 2]
+		end 
+		if [self.position[0] + 1, self.position[1] - 2] != nil 
+			attacked_squares << [self.position[0] + 1, self.position[1] - 2]
+		end 
+		if [self.position[0] + 1, self.position[1] + 2] != nil 
+			attacked_squares << [self.position[0] + 1, self.position[1] + 2]
+		end 
+		if attacked_squares << [self.position[0] + 2, self.position[1] - 1] != nil
+			attacked_squares << [self.position[0] + 2, self.position[1] - 1]
+		end 
+		if attacked_squares << [self.position[0] + 2, self.position[1] + 1] !=nil 
+			attacked_squares << [self.position[0] + 2, self.position[1] + 1]
+		end 
+		attacked_squares
+	end 
+	
+	def valid_move?(board, square)
+		if attacking?(board, square).include?(square) && (board.board[square[0]][square[1]] == nil || board.board[square[0]][square[1]].color != self.color)
+			return true 
+		else 
+			return false 
+		end 
+	end 
 	
 	
 end 
